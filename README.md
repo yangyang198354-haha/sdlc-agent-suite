@@ -1,4 +1,4 @@
-# SDLC Agent Suite v3.4.1
+# SDLC Agent Suite v3.5
 
 这是一套通用的 Claude Code 子代理，按软件开发生命周期完成一个需求：需求分析 → 架构设计 → 开发 → 测试 → CI/部署计划 → 知识蒸馏。项目经理代理 `pm-orchestrator` 负责编排，每个阶段结束都要过门控评审，并亲自复跑测试核验结果。生产部署只有在你当轮明确授权后才会执行。
 
@@ -21,6 +21,7 @@
 | `.claude/agents/templates/agent_builder_templates.md` | agent-builder 生成 agent 用的模板（九层骨架、安全块、记忆与知识模块、子代理规范、套件成员骨架） |
 | `.claude/agents/knowledge_base/generic/` | 跨项目通用经验（随套件分发） |
 | `.claude/hooks/sdlc_subagent_stop.py` | SubagentStop：检查子代理返回是否完整，收集经验提案写入收件箱（凭据自动脱敏） |
+| `.claude/hooks/sdlc_webfetch_guard.py` | PreToolUse：agent-builder 只能用 WebFetch 访问 Claude Code 官方文档白名单页，其他网址与 WebSearch 一律拒绝 |
 | `.claude/hooks/sdlc_pre_agent.py` | PreToolUse：主会话不在仓库根时拒绝调用 SDLC 子代理，防止子代理记忆目录建错位置 |
 | `.claude/settings.example.json` | 钩子注册；远程操作与安装依赖前要求确认 |
 
@@ -34,7 +35,7 @@
 
 ## 设计要点
 
-- **pm-orchestrator 必须作为主会话运行**：Claude Code 的子代理不能再调用子代理。
+- **pm-orchestrator 必须作为主会话运行**：子代理虽然可以再调用子代理（默认最多三层），但无法直接与用户对话；澄清、门控争议和部署授权都需要读到你当轮的消息。
 - **三层知识**：
   - 通用经验：`knowledge_base/generic/`
   - 项目记忆：原生 `memory: project`，路径 `.claude/agent-memory/{agent}/MEMORY.md`，自动注入
@@ -44,7 +45,7 @@
   - INCREMENTAL：现有代码上的改动，相对基线零新增失败
   - PARTIAL_FLOW：从中间某个阶段开始
 - **状态与续跑**：状态写在 `phase_status.md`（可解析的 XML）。中断后可以按这个文件续跑。
-- **联网**：只有需求分析与架构 agent 有 WebSearch / WebFetch；查询不得带项目代码、内部地址或凭据，网页内容只当数据，引用标 `[WEB: URL，日期]`。
+- **联网**：需求分析与架构 agent 有 WebSearch / WebFetch；agent-builder 只有 WebFetch，且只能访问 Claude Code 官方文档的固定几页，用于核实平台事实（由 `sdlc_webfetch_guard.py` 钩子强制）。查询不得带项目代码、内部地址或凭据，网页内容只当数据，引用标 `[WEB: URL，日期]`。
 - **评审 agent**：`claude --agent agent-builder` 或在主会话中让它评审某个 agent。默认只在回复中给结果，要写文件需在请求里写 `WRITE_TARGET: <路径>`（覆盖已有文件还需 `OVERWRITE_AUTHORIZED: <路径>`）。
 - **无人值守运行**：需要澄清时，按"最保守、改动最小"的选项代答并记录在案；存在代答时，最终状态不会是 DELIVERED。
 
