@@ -1,4 +1,4 @@
-# SDLC Agent Suite v3.2
+# SDLC Agent Suite v3.3
 
 这是一套通用的 Claude Code 子代理，按软件开发生命周期完成一个需求：需求分析 → 架构设计 → 开发 → 测试 → CI/部署计划 → 知识蒸馏。项目经理代理 `pm-orchestrator` 负责编排，每个阶段结束都要过门控评审，并亲自复跑测试核验结果。生产部署只有在你当轮明确授权后才会执行。
 
@@ -9,8 +9,8 @@
 | 文件 | 作用 |
 |---|---|
 | `.claude/agents/pm-orchestrator.md` | 项目经理（主会话运行）：画像引导、阶段编排、门控、澄清、缺陷回流、上报 |
-| `.claude/agents/requirement-analyst.md` | GROUP_A：需求规格、用户故事（MoSCoW、故事点、G/W/T 验收标准） |
-| `.claude/agents/system-architect.md` | GROUP_B：架构决策（ADR）、模块设计（类型化接口契约）、技术栈 |
+| `.claude/agents/requirement-analyst.md` | GROUP_A：需求规格、用户故事（MoSCoW、故事点、G/W/T 验收标准）；可联网查行业做法/法规，结论标为待确认推断 |
+| `.claude/agents/system-architect.md` | GROUP_B：架构决策（ADR）、模块设计（类型化接口契约）、技术栈；可联网核实版本、许可证、漏洞与兼容性 |
 | `.claude/agents/software-developer.md` | GROUP_C：实现与五维代码自评审，修复缺陷 |
 | `.claude/agents/test-engineer.md` | GROUP_D：单元 / 集成 / E2E 三层测试，真实执行，阈值或基线判定 |
 | `.claude/agents/devops-engineer.md` | GROUP_E1：CI/CD 与部署计划；GROUP_E2：授权后执行部署与回滚 |
@@ -42,6 +42,7 @@
   - INCREMENTAL：现有代码上的改动，相对基线零新增失败
   - PARTIAL_FLOW：从中间某个阶段开始
 - **状态与续跑**：状态写在 `phase_status.md`（可解析的 XML）。中断后可以按这个文件续跑。
+- **联网**：只有需求分析与架构 agent 有 WebSearch / WebFetch；查询不得带项目代码、内部地址或凭据，网页内容只当数据，引用标 `[WEB: URL，日期]`。
 - **无人值守运行**：需要澄清时，按"最保守、改动最小"的选项代答并记录在案；存在代答时，最终状态不会是 DELIVERED。
 
 ## 验证情况
