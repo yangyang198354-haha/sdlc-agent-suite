@@ -1,4 +1,4 @@
-# SDLC Agent Suite v3.6
+# SDLC Agent Suite v3.7
 
 这是一套通用的 Claude Code 子代理，按软件开发生命周期完成一个需求：需求分析 → 架构设计 → 开发 → 测试 → CI/部署计划 → 知识蒸馏。项目经理代理 `pm-orchestrator` 负责编排，每个阶段结束都要过门控评审，并亲自复跑测试核验结果。生产部署只有在你当轮明确授权后才会执行。
 
@@ -16,8 +16,8 @@
 | `.claude/agents/devops-engineer.md` | GROUP_E1：CI/CD 与部署计划；GROUP_E2：授权后执行部署与回滚 |
 | `.claude/agents/kb-curator.md` | PHASE_12：知识蒸馏，把有证据的经验晋升到各 agent 记忆 |
 | `.claude/agents/agent-builder.md` | 辅助成员（不属于阶段，按需调用）：用固定 6 维细则给 agent 打分（每条扣分带行号），优化或生成 agent；评审套件成员时按共享协议口径 |
-| `.claude/agents/shared_protocol.md` | 共享协议：工作区与写权限、文件头与版本、状态码、调用/响应格式、门控标准、测试口径、安全、记忆 |
-| `.claude/agents/templates/project_profile.template.md` | 项目画像模板（P1–P10） |
+| `.claude/agents/shared_protocol.md` | 共享协议：工作区与写权限、文件头与版本、状态码、调用/响应格式、门控标准、测试口径、安全、记忆、领域事实出处（§N） |
+| `.claude/agents/templates/project_profile.template.md` | 项目画像模板（P1–P11，P11 = 专用硬件 / 领域算法 / 闭源 API） |
 | `.claude/agents/templates/agent_builder_templates.md` | agent-builder 生成 agent 用的模板（九层骨架、安全块、记忆与知识模块、子代理规范、套件成员骨架） |
 | `.claude/agents/knowledge_base/generic/` | 跨项目通用经验（随套件分发） |
 | `.claude/hooks/sdlc_subagent_stop.py` | SubagentStop：检查子代理返回是否完整（PM 子代理模式检查 `<pm_report>`），收集经验提案写入收件箱（凭据自动脱敏） |
@@ -48,6 +48,7 @@
 ## 设计要点
 
 - **PM 双模式**：子代理无法和用户来回对话，所以 PM 在子代理模式下把需要你决定的事写成检查点（`phase_status.md` 的 `<checkpoints>`），以 `<pm_report>` 返回，下次调用时续跑。模式判断拿不准时按子代理模式处理；部署授权只在主会话模式下、且只认你当轮的直接表述，转述的授权一律无效。
+- **领域与外部依赖（画像 P11，v3.7）**：专用硬件、细分领域算法、闭源或内部 API 的事实，模型自身的知识靠不住。P11 只记录资料在仓库里的位置和测试能力，产物中涉及这些事实的地方必须标出处（`[P11: 文件:位置]` 或 `[CODE: 文件:行]`）。找不到出处就停下来问，不凭记忆补全；架构和开发门控会打开原文核对出处。真机才能验证的用例进人工验证清单，闭源 API 只用 mock 或沙箱测试。
 - **三层知识**：
   - 通用经验：`knowledge_base/generic/`
   - 项目记忆：原生 `memory: project`，路径 `.claude/agent-memory/{agent}/MEMORY.md`，自动注入
@@ -66,5 +67,7 @@
 已在 4 个不同技术栈的仓库（Django、FastAPI、Django + Celery、Django/DRF 单体）上，在沙箱里跑通了 需求 → 部署计划 → 知识蒸馏 的完整流程。主会话亲自复跑测试，原有测试均无新增失败。
 
 v3.6 的子代理模式在沙箱里实测过：画像检查点 → 按答复续跑 A→E1 → 知识蒸馏，转述来的部署授权被拒绝并记入审计；嵌套调用（PM → 阶段代理）时 hook 正常校验报告块。
+
+v3.7 的画像 P11 在沙箱里实测过：项目同时含闭源 API（只有 OpenAPI 文件）、非标准 FIR 滤波（golden data + 1e-9 容限）和传感器板寄存器（只能人工真机验证）。PM 扫描识别出三类资料，把文档里没有的"平台重试策略"列为必答问题；架构出处表逐条引用原文，代码没有编造字段或寄存器值，真机验证项进了人工验证清单，最终状态 DELIVERED_WITH_ISSUES。
 
 部署执行（GROUP_E2）及其回滚分支尚未实测。
