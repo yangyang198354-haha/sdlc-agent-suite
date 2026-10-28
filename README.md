@@ -1,4 +1,4 @@
-# SDLC Agent Suite v3.5.2
+# SDLC Agent Suite v3.6
 
 这是一套通用的 Claude Code 子代理，按软件开发生命周期完成一个需求：需求分析 → 架构设计 → 开发 → 测试 → CI/部署计划 → 知识蒸馏。项目经理代理 `pm-orchestrator` 负责编排，每个阶段结束都要过门控评审，并亲自复跑测试核验结果。生产部署只有在你当轮明确授权后才会执行。
 
@@ -8,7 +8,7 @@
 
 | 文件 | 作用 |
 |---|---|
-| `.claude/agents/pm-orchestrator.md` | 项目经理（主会话运行）：画像引导、阶段编排、门控、澄清、缺陷回流、上报 |
+| `.claude/agents/pm-orchestrator.md` | 项目经理（主会话 / 子代理双模式）：画像引导、阶段编排、门控、澄清、缺陷回流、上报 |
 | `.claude/agents/requirement-analyst.md` | GROUP_A：需求规格、用户故事（MoSCoW、故事点、G/W/T 验收标准）；可联网查行业做法/法规，结论标为待确认推断 |
 | `.claude/agents/system-architect.md` | GROUP_B：架构决策（ADR）、模块设计（类型化接口契约）、技术栈；可联网核实版本、许可证、漏洞与兼容性 |
 | `.claude/agents/software-developer.md` | GROUP_C：实现与五维代码自评审，修复缺陷 |
@@ -20,9 +20,9 @@
 | `.claude/agents/templates/project_profile.template.md` | 项目画像模板（P1–P10） |
 | `.claude/agents/templates/agent_builder_templates.md` | agent-builder 生成 agent 用的模板（九层骨架、安全块、记忆与知识模块、子代理规范、套件成员骨架） |
 | `.claude/agents/knowledge_base/generic/` | 跨项目通用经验（随套件分发） |
-| `.claude/hooks/sdlc_subagent_stop.py` | SubagentStop：检查子代理返回是否完整，收集经验提案写入收件箱（凭据自动脱敏） |
+| `.claude/hooks/sdlc_subagent_stop.py` | SubagentStop：检查子代理返回是否完整（PM 子代理模式检查 `<pm_report>`），收集经验提案写入收件箱（凭据自动脱敏） |
 | `.claude/hooks/sdlc_webfetch_guard.py` | PreToolUse：agent-builder 只能用 WebFetch 访问 Claude Code 官方文档白名单页，其他网址与 WebSearch 一律拒绝 |
-| `.claude/hooks/sdlc_pre_agent.py` | PreToolUse：主会话不在仓库根时拒绝调用 SDLC 子代理，防止子代理记忆目录建错位置 |
+| `.claude/hooks/sdlc_pre_agent.py` | PreToolUse：当前目录不在仓库根时拒绝调用 SDLC 子代理（含 pm-orchestrator），防止子代理记忆目录建错位置 |
 | `.claude/settings.example.json` | 钩子注册；远程操作与安装依赖前要求确认 |
 
 ## 安装
@@ -31,11 +31,23 @@
 
 1. 把 `.claude/agents/` 和 `.claude/hooks/` 复制到目标仓库的 `.claude/` 下。
 2. 把 `settings.example.json` 里的 `hooks` 和 `permissions` 合并进目标仓库的 `.claude/settings.json`。
-3. 在目标仓库根目录运行 `claude --agent pm-orchestrator`，然后直接提需求。第一次运行时，PM 会先扫描仓库生成项目画像初稿，请你确认后再开始。
+3. 在目标仓库根目录选一种方式启动 PM（见下方"两种运行模式"），然后直接提需求。第一次运行时，PM 会先扫描仓库生成项目画像初稿，请你确认后再开始。
+
+## 两种运行模式
+
+| | 主会话模式 | 子代理模式 |
+|---|---|---|
+| 启动 | `claude --agent pm-orchestrator` | 普通会话里 `@pm-orchestrator 需求…` |
+| 交互 | 当场提问，你当场回答 | 一口气跑到需要你决定的地方（检查点），返回问题清单；你回答后再 @ 一次，从断点续跑 |
+| 子代理澄清 | 问你 | 普通问题由 PM 按最保守选项代答并标"待确认"；关键问题进检查点 |
+| 部署 | E1 后经你当轮授权可执行 E2 | 止于部署计划（E1），不执行任何部署 |
+| 适合 | 需要频繁拍板、要部署 | 需求明确、想在当前会话里顺手推进 |
+
+两种模式共用同一份 `phase_status.md`，可以随时切换：比如先用子代理模式跑到部署计划，再用主会话模式授权部署。
 
 ## 设计要点
 
-- **pm-orchestrator 必须作为主会话运行**：子代理虽然可以再调用子代理（默认最多三层），但无法直接与用户对话；澄清、门控争议和部署授权都需要读到你当轮的消息。
+- **PM 双模式**：子代理无法和用户来回对话，所以 PM 在子代理模式下把需要你决定的事写成检查点（`phase_status.md` 的 `<checkpoints>`），以 `<pm_report>` 返回，下次调用时续跑。模式判断拿不准时按子代理模式处理；部署授权只在主会话模式下、且只认你当轮的直接表述，转述的授权一律无效。
 - **三层知识**：
   - 通用经验：`knowledge_base/generic/`
   - 项目记忆：原生 `memory: project`，路径 `.claude/agent-memory/{agent}/MEMORY.md`，自动注入
@@ -52,5 +64,7 @@
 ## 验证情况
 
 已在 4 个不同技术栈的仓库（Django、FastAPI、Django + Celery、Django/DRF 单体）上，在沙箱里跑通了 需求 → 部署计划 → 知识蒸馏 的完整流程。主会话亲自复跑测试，原有测试均无新增失败。
+
+v3.6 的子代理模式在沙箱里实测过：画像检查点 → 按答复续跑 A→E1 → 知识蒸馏，转述来的部署授权被拒绝并记入审计；嵌套调用（PM → 阶段代理）时 hook 正常校验报告块。
 
 部署执行（GROUP_E2）及其回滚分支尚未实测。
