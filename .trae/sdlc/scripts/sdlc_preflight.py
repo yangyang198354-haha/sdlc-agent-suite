@@ -133,9 +133,15 @@ def check_all() -> int:
         if not os.path.isfile(os.path.join(RUNTIME, rel)):
             problems.append("missing runtime file: .trae/sdlc/%s" % rel)
 
-    # 4) phase_status XML well-formed (if any)
+    # 4) phase_status XML well-formed (skip legacy Markdown files)
     for rel in glob.glob(os.path.join(RUNTIME, "**", "phase_status.md"), recursive=True) + \
                glob.glob(os.path.join(ROOT, "docs", "**", "phase_status.md"), recursive=True):
+        with io.open(rel, encoding="utf-8", errors="replace") as fh:
+            head = fh.read(4096)
+        probe = re.sub(r"^(?:\s|<!--.*?-->|<\?xml.*?\?>)*", "", head, flags=re.S)
+        if not probe.startswith("<phase_status"):
+            print("SKIP_NON_XML %s" % rel)
+            continue
         try:
             ET.parse(rel)
         except Exception as exc:  # noqa: BLE001
