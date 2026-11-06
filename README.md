@@ -25,6 +25,26 @@
 | `.claude/hooks/sdlc_pre_agent.py` | PreToolUse：当前目录不在仓库根时拒绝调用 SDLC 子代理（含 pm-orchestrator），防止子代理记忆目录建错位置 |
 | `.claude/settings.example.json` | 钩子注册；远程操作与安装依赖前要求确认 |
 
+## 多平台版本
+
+同一套角色同时提供三个平台的落地形态，内容以 `.claude/agents/` 为唯一真源。
+
+| 平台 | 位置 | 形态 | 说明 |
+|---|---|---|---|
+| Claude Code | `.claude/` | agents + hooks + templates + knowledge_base | 源套件，v3.7 |
+| Codex | `.codex/` + `scripts/codex_sdlc/` + `AGENTS.md` | 8 个 `agents/*.toml` + `sdlc/`（shared_protocol、pm-orchestrator、runtime_adapter、knowledge_base、templates、migration_manifest）+ `rules/sdlc.rules` + `hooks.json` + `config.toml`；根目录 `scripts/codex_sdlc/`（hook_runtime、fetch_docs、migrate、verify_migration、test_hooks、probe_runtime）+ `AGENTS.md` + `docs/codex-agent-migration.md` | 由 `.claude/agents/*.md` 迁移生成，当前对应 v3.7；**hooks.json 依赖 `scripts/codex_sdlc/hook_runtime.py`，缺脚本则 hook 空转**；`rules/sdlc.rules` 附带原始项目的权限策略（docker 禁用），复用到其他项目时按需调整 |
+| Trae | `.trae/` | 9 个 `skills/sdlc-*/SKILL.md` + 8 个 `agent-packs/*.md` + `sdlc/` 运行时（scripts / knowledge_base / templates / suite_config） | 由 `.trae/sdlc/scripts/port_from_claude.py` 从 `.claude/agents/*.md` 生成，当前对应 v3.7 |
+
+Trae 版同步方式（改完 `.claude/agents/` 后重跑，版本号在脚本 `SUITE_VERSION`）：
+
+```bash
+python .trae/sdlc/scripts/port_from_claude.py --check   # 只报告
+python .trae/sdlc/scripts/port_from_claude.py           # 重写 skills / packs / 通用知识库
+```
+
+Trae 版安装：把 `.trae/` 复制到目标仓库的 `.trae/`，在主会话加载 `Skill: sdlc-orchestrator`。
+Codex 版安装：把 `.codex/`、`scripts/codex_sdlc/`、`AGENTS.md` 复制到目标仓库根（`docs/codex-agent-migration.md` 供参考），按 `.codex/sdlc/INSTALL.md` 完成配置，并在 Codex `/hooks` 中审阅、信任 hooks。hook 缺失或被拒绝信任时不会自动注入记忆、校验返回或拦截 cwd，角色须显式读取记忆。
+
 ## 安装
 
 见 [`.claude/agents/INSTALL.md`](.claude/agents/INSTALL.md)。简要步骤：
