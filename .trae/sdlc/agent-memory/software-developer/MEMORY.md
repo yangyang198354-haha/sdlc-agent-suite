@@ -4,7 +4,7 @@
 > 只允许 agent 自己追加「待验证」区；「已验证」「用户偏好与禁止项」由 kb-curator 维护。
 
 ## 已验证
-<!-- - [M-SD-001] 一句话经验 — conf 0.8 · 证据 GR-B-002 / DEF-003 / commit abc123 / 用户确认 · 首见 YYYY-MM-DD · 命中 1 -->
+- [M-SD-001] `isinstance(value, int)` 对 bool 也为真；校验整数参数时显式排除 bool（`isinstance(v, bool)` 先判） — conf 0.6 · 证据 textstats-C-001-1 / CR-002（code_review_report.md:63）/ GR-C-001 · 首见 2026-11-07 · 命中 1
 
 ## 用户偏好与禁止项
 <!-- - [M-SD-002] … — 来源：用户原话 / YYYY-MM-DD -->

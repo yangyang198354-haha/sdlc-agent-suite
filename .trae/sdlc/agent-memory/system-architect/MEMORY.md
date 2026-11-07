@@ -4,7 +4,7 @@
 > 只允许 agent 自己追加「待验证」区；「已验证」「用户偏好与禁止项」由 kb-curator 维护。
 
 ## 已验证
-<!-- - [M-SA-001] 一句话经验 — conf 0.8 · 证据 GR-B-002 / DEF-003 / commit abc123 / 用户确认 · 首见 YYYY-MM-DD · 命中 1 -->
+- [M-SA-001] 小工具也值得把纯逻辑与进程入口分离，让核心用例不依赖 sys.argv 与子进程 — conf 0.6 · 证据 textstats-B-001-1 / ADR-003、IFC-002（module_design.md）/ GR-B-001 · 首见 2026-11-07 · 命中 1
 
 ## 用户偏好与禁止项
 <!-- - [M-SA-002] … — 来源：用户原话 / YYYY-MM-DD -->
