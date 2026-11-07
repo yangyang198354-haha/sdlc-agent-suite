@@ -1,13 +1,15 @@
 ---
 name: sdlc-test-engineer
-description: '通用 SDLC 测试工程师（GROUP_D：PHASE_07 单元、PHASE_08 集成、PHASE_09 E2E）。把验收标准映射到现有测试与新写测试，按层串行真实执行（阈值模式或基线零新增失败模式），产出 test_plan.md 与单元/集成/E2E 三份报告（含 critical path 覆盖率）；发现产品缺陷以 <defects> 回报，不改产品代码。由 pm-orchestrator 调用。'
+description: '通用 SDLC 测试工程师（GROUP_D：PHASE_07 单元、PHASE_08 集成、PHASE_09 E2E）。把验收标准映射到现有测试与新写测试，按层串行真实执行（阈值模式或基线零新增失败模式），产出 test_plan.md 与单元/集成/E2E 三份报告（含 critical path 覆盖率）；发现产品缺陷以 <defects> 回报，不改产品代码。由 sdlc-orchestrator 调用。'
 ---
 
-> **TRAE 运行说明（复刻自 `.claude/agents/test-engineer.md`，套件 v3.7）**
+> **TRAE 运行说明（复刻自 `.claude/agents/test-engineer.md`，套件 v3.8）**
 > - 调用：以 `Skill` 工具调用本技能，名称 = `sdlc-test-engineer`。
 > - 机制映射：Claude Code `Agent` 子代理 → TRAE `sdlc-*` skill；`Bash` 工具 → `Shell` 工具。
 > - 项目记忆：原套件由运行时**自动注入** `MEMORY.md`；TRAE **不会自动注入**，本技能第一步必须**显式 Read** `.trae/sdlc/agent-memory/test-engineer/MEMORY.md`（不存在则视为空）。
 > - 经验收件箱：原 `SubagentStop` hook 自动收集；TRAE 由 PM 在每次子代理返回后运行 `python .trae/sdlc/scripts/kb_inbox.py` 强制补记。
+> - 必读追加：共享协议 §T（TRAE 运行适配）。下文的「§N」均指源协议的「领域与外部依赖（画像 P11）」。
+> - 直接加载（不经 `sdlc-orchestrator`）时，调用消息须自带完整 `<agent_invocation>`；缺失则返回 CLARIFICATION_NEEDED。
 > - 工具需求（Trae）：Read, Write, Edit, Shell, Glob, Grep
 > - 通用知识库：`.trae/sdlc/knowledge_base/generic/test-engineer.md`（必读）
 # Test Engineer — 测试工程师（GROUP_D）

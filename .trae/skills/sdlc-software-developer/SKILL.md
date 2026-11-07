@@ -1,13 +1,15 @@
 ---
 name: sdlc-software-developer
-description: '通用 SDLC 开发工程师（GROUP_C：PHASE_05 开发、PHASE_06 代码评审）。按已批准的模块设计，按依赖拓扑顺序实现（已有代码库做最小改动，全新项目按模块组织），运行相关测试自验证，五维评分自评审，产出 implementation_plan.md 与 code_review_report.md。也负责修复 test-engineer 报告的缺陷。由 pm-orchestrator 调用。'
+description: '通用 SDLC 开发工程师（GROUP_C：PHASE_05 开发、PHASE_06 代码评审）。按已批准的模块设计，按依赖拓扑顺序实现（已有代码库做最小改动，全新项目按模块组织），运行相关测试自验证，五维评分自评审，产出 implementation_plan.md 与 code_review_report.md。也负责修复 test-engineer 报告的缺陷。由 sdlc-orchestrator 调用。'
 ---
 
-> **TRAE 运行说明（复刻自 `.claude/agents/software-developer.md`，套件 v3.7）**
+> **TRAE 运行说明（复刻自 `.claude/agents/software-developer.md`，套件 v3.8）**
 > - 调用：以 `Skill` 工具调用本技能，名称 = `sdlc-software-developer`。
 > - 机制映射：Claude Code `Agent` 子代理 → TRAE `sdlc-*` skill；`Bash` 工具 → `Shell` 工具。
 > - 项目记忆：原套件由运行时**自动注入** `MEMORY.md`；TRAE **不会自动注入**，本技能第一步必须**显式 Read** `.trae/sdlc/agent-memory/software-developer/MEMORY.md`（不存在则视为空）。
 > - 经验收件箱：原 `SubagentStop` hook 自动收集；TRAE 由 PM 在每次子代理返回后运行 `python .trae/sdlc/scripts/kb_inbox.py` 强制补记。
+> - 必读追加：共享协议 §T（TRAE 运行适配）。下文的「§N」均指源协议的「领域与外部依赖（画像 P11）」。
+> - 直接加载（不经 `sdlc-orchestrator`）时，调用消息须自带完整 `<agent_invocation>`；缺失则返回 CLARIFICATION_NEEDED。
 > - 工具需求（Trae）：Read, Write, Edit, Shell, Glob, Grep
 > - 通用知识库：`.trae/sdlc/knowledge_base/generic/software-developer.md`（必读）
 # Software Developer — 开发工程师（GROUP_C）

@@ -1,7 +1,6 @@
-# Migrated from .claude/settings.json. Most restrictive matching rule wins.
+# Migrated from .claude/settings.example.json. Most restrictive matching rule wins.
 prefix_rule(pattern=[["conda", "conda.exe", "conda.cmd"], "install"], decision="prompt", justification="SDLC project permission policy")
 prefix_rule(pattern=[["git", "git.exe", "git.cmd"], "push"], decision="prompt", justification="SDLC project permission policy")
-prefix_rule(pattern=[["mysql", "mysql.exe", "mysql.cmd"]], decision="prompt", justification="SDLC project permission policy")
 prefix_rule(pattern=[["npm", "npm.exe", "npm.cmd"], "ci"], decision="prompt", justification="SDLC project permission policy")
 prefix_rule(pattern=[["npm", "npm.exe", "npm.cmd"], "i"], decision="prompt", justification="SDLC project permission policy")
 prefix_rule(pattern=[["npm", "npm.exe", "npm.cmd"], "install"], decision="prompt", justification="SDLC project permission policy")
@@ -26,5 +25,3 @@ prefix_rule(pattern=[["uv", "uv.exe", "uv.cmd"], "sync"], decision="prompt", jus
 prefix_rule(pattern=[["yarn", "yarn.exe", "yarn.cmd"]], decision="prompt", justification="SDLC project permission policy")
 prefix_rule(pattern=[["yarn", "yarn.exe", "yarn.cmd"], "add"], decision="prompt", justification="SDLC project permission policy")
 prefix_rule(pattern=[["yarn", "yarn.exe", "yarn.cmd"], "install"], decision="prompt", justification="SDLC project permission policy")
-prefix_rule(pattern=[["docker", "docker.exe", "docker.cmd"]], decision="forbidden", justification="SDLC project permission policy")
-prefix_rule(pattern=[["docker-compose", "docker-compose.exe", "docker-compose.cmd"]], decision="forbidden", justification="SDLC project permission policy")
