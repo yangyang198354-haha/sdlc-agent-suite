@@ -39,6 +39,9 @@
     "ask": [
       "Bash(ssh *)",
       "Bash(scp *)",
+      "Bash(rsync *)",
+      "Bash(pscp *)",
+      "Bash(plink *)",
       "Bash(git push *)",
       "Bash(pip install *)",
       "Bash(pip3 install *)",

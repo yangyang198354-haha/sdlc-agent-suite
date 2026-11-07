@@ -1,3 +1,6 @@
 __pycache__/
 *.pyc
 output/
+# SDLC hook runtime state (Codex / Trae)
+project_workspace/.codex_hook_state/
+project_workspace/.hook_state/
