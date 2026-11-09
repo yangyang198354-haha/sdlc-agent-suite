@@ -1,4 +1,4 @@
-# SDLC Agent Suite v3.8 — Codex 安装
+# SDLC Agent Suite v3.9 — Codex 安装
 
 ## 前置条件
 

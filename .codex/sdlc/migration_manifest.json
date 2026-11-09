@@ -1,7 +1,7 @@
 {
-  "source_version": "3.8",
-  "source_commit": "661f2093a76442604d78357851d483e5b7c5f44b",
-  "built_at": "2026-11-07T16:02:41.102765+08:00",
+  "source_version": "3.9",
+  "source_commit": "f60c0b7a286a354f1bb0c97c3cab2ccda8f50e62",
+  "built_at": "2026-11-09T09:48:09.309607+08:00",
   "roles": {
     "agent-builder": {
       "name": "agent-builder",
@@ -96,17 +96,17 @@
     {
       "target": ".codex/agents/pm-orchestrator.toml",
       "source": ".claude/agents/pm-orchestrator.md",
-      "source_sha256": "e8b646b3650bf0e73622c8fcb4e2bf2c4c2bf87f60a771388ea740e0f5a4ae17",
+      "source_sha256": "1c8363b4164413c5141d2d8fd78639382b9513d52e9d3bb68af72cde38453b80",
       "previous_sha256": "909ea4dbb63db68a939df468522e43df71bfb1eabc20218b22cf4dfde94355a3",
-      "sha256": "909ea4dbb63db68a939df468522e43df71bfb1eabc20218b22cf4dfde94355a3",
+      "sha256": "1ca3117d5b204f4944ddbb4fe4bdb4a4362a0830d290a238d79ecb7c797026cf",
       "preserve_on_rerun": false
     },
     {
       "target": ".codex/sdlc/pm-orchestrator.md",
       "source": ".claude/agents/pm-orchestrator.md",
-      "source_sha256": "e8b646b3650bf0e73622c8fcb4e2bf2c4c2bf87f60a771388ea740e0f5a4ae17",
+      "source_sha256": "1c8363b4164413c5141d2d8fd78639382b9513d52e9d3bb68af72cde38453b80",
       "previous_sha256": "f9b6ecf650503d918ee6f5196786c7dcdc3e5d052766cd69652d80f5ff2580c8",
-      "sha256": "f9b6ecf650503d918ee6f5196786c7dcdc3e5d052766cd69652d80f5ff2580c8",
+      "sha256": "9dbd20101cc79d69acedd11b354303e574a3e5f5a5fed92f32c5251e5ceebbe7",
       "preserve_on_rerun": false
     },
     {
@@ -120,9 +120,9 @@
     {
       "target": ".codex/agents/software-developer.toml",
       "source": ".claude/agents/software-developer.md",
-      "source_sha256": "2a14400244692a72e73f4e410a65509fa7e0403691a570145c7ebc8695b02de4",
+      "source_sha256": "913d4b91a23216723524990295c44194dbc32730f6851ff8b718127f1b5ac30b",
       "previous_sha256": "7da448570279d3562cc47051633431a7486aba88e9b11a4af8f66177e0b62866",
-      "sha256": "7da448570279d3562cc47051633431a7486aba88e9b11a4af8f66177e0b62866",
+      "sha256": "301b3724c04150d37152bb8aab9a2bb63b044743839e68592c0a7ae22473edc9",
       "preserve_on_rerun": false
     },
     {
@@ -136,9 +136,9 @@
     {
       "target": ".codex/agents/test-engineer.toml",
       "source": ".claude/agents/test-engineer.md",
-      "source_sha256": "8d774a7c35a74270f6eb7e7b221c792acd98e0853efeafc6d42409a243ba2b13",
+      "source_sha256": "e6cd9490c7addd82735727e78a0d8e4f436d333ae0c80f4547df6b926b96990c",
       "previous_sha256": "65028ba546c49fc640638833e4b19db9dd272ea1ba5b01e29fc30f4dab3b0979",
-      "sha256": "65028ba546c49fc640638833e4b19db9dd272ea1ba5b01e29fc30f4dab3b0979",
+      "sha256": "c699e3059b2722b627521c8ec5a96fad6d83a836b05424a2ee832ae1f11dc58c",
       "preserve_on_rerun": false
     },
     {
@@ -224,9 +224,9 @@
     {
       "target": ".codex/sdlc/shared_protocol.md",
       "source": ".claude/agents/shared_protocol.md",
-      "source_sha256": "5848a6c00b382b19afc9d9455a4c62fc79a19cfe106eadcef203e26c85369b41",
+      "source_sha256": "6c5938aa8ad96b3d863338512b7087664385ecd4fab04a4db104d15bcb3a672b",
       "previous_sha256": "76231218d55f30ba3a1a610955d77038ad3328b8f17172cce8730db346bcd4f5",
-      "sha256": "76231218d55f30ba3a1a610955d77038ad3328b8f17172cce8730db346bcd4f5",
+      "sha256": "778cd0e381b3ccc774a4e5e2675abff7e3a1348735ff10aae5edee72738b5da3",
       "preserve_on_rerun": false
     },
     {
@@ -313,8 +313,8 @@
       "target": ".codex/hooks.json",
       "source": ".claude/settings.example.json",
       "source_sha256": "00c2b09af2ba500d0cecf27e71db29956c7cdde0c32600426e14843f65d2c350",
-      "previous_sha256": "db3d73d8f0863f4c1320b176d42e7f98adf9f5eec9d21ccda53336d3a19eb3b3",
-      "sha256": "08eadbddf27d0d9a338e6500fc798b65df2e7535d08fa64c5b272c2a31dd880f",
+      "previous_sha256": "08eadbddf27d0d9a338e6500fc798b65df2e7535d08fa64c5b272c2a31dd880f",
+      "sha256": "d9fe850675448483edb3df693a6b5016a012e7980560d42f7fa9614fcc5dc5c1",
       "preserve_on_rerun": false
     },
     {

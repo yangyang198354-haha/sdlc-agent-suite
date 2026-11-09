@@ -1,4 +1,4 @@
-# SDLC Agent Suite v3.8
+# SDLC Agent Suite v3.9
 
 这是一套通用的 Claude Code 子代理，按软件开发生命周期完成一个需求：需求分析 → 架构设计 → 开发 → 测试 → CI/部署计划 → 知识蒸馏。项目经理代理 `pm-orchestrator` 负责编排，每个阶段结束都要过门控评审，并亲自复跑测试核验结果。生产部署只有在你当轮明确授权后才会执行。
 
@@ -31,9 +31,9 @@
 
 | 平台 | 位置 | 形态 | 说明 |
 |---|---|---|---|
-| Claude Code | `.claude/` | agents + hooks + templates + knowledge_base | 源套件，v3.8 |
-| Codex | `.codex/` + `scripts/codex_sdlc/` + `AGENTS.md` | 8 个 `agents/*.toml` + `sdlc/`（shared_protocol、pm-orchestrator、runtime_adapter、knowledge_base、templates、migration_manifest）+ `rules/sdlc.rules` + `hooks.json` + `config.toml`；根目录 `scripts/codex_sdlc/`（hook_runtime、fetch_docs、migrate、verify_migration、test_hooks、probe_runtime）+ `AGENTS.md` + `docs/codex-agent-migration.md` | 由 `.claude/agents/*.md` 迁移生成，当前对应 v3.8；**hooks.json 依赖 `scripts/codex_sdlc/hook_runtime.py`，缺脚本则 hook 空转**；`rules/sdlc.rules` 附带原始项目的权限策略（docker 禁用），复用到其他项目时按需调整 |
-| Trae | `.trae/` | 9 个 `skills/sdlc-*/SKILL.md` + 8 个 `agent-packs/*.md` + `sdlc/` 运行时（scripts / knowledge_base / templates / suite_config） | 由 `.trae/sdlc/scripts/port_from_claude.py` 从 `.claude/agents/*.md` 生成，当前对应 v3.8 |
+| Claude Code | `.claude/` | agents + hooks + templates + knowledge_base | 源套件，v3.9 |
+| Codex | `.codex/` + `scripts/codex_sdlc/` + `AGENTS.md` | 8 个 `agents/*.toml` + `sdlc/`（shared_protocol、pm-orchestrator、runtime_adapter、knowledge_base、templates、migration_manifest）+ `rules/sdlc.rules` + `hooks.json` + `config.toml`；根目录 `scripts/codex_sdlc/`（hook_runtime、fetch_docs、migrate、verify_migration、test_hooks、probe_runtime）+ `AGENTS.md` + `docs/codex-agent-migration.md` | 由 `.claude/agents/*.md` 迁移生成，当前对应 v3.9；**hooks.json 依赖 `scripts/codex_sdlc/hook_runtime.py`，缺脚本则 hook 空转**；`rules/sdlc.rules` 附带原始项目的权限策略（docker 禁用），复用到其他项目时按需调整 |
+| Trae | `.trae/` | 9 个 `skills/sdlc-*/SKILL.md` + 8 个 `agent-packs/*.md` + `sdlc/` 运行时（scripts / knowledge_base / templates / suite_config） | 由 `.trae/sdlc/scripts/port_from_claude.py` 从 `.claude/agents/*.md` 生成，当前对应 v3.9 |
 
 Trae 版同步方式（改完 `.claude/agents/` 后重跑，版本号在脚本 `SUITE_VERSION`）：
 
@@ -48,6 +48,15 @@ Codex 版同步（改完 `.claude/agents/` 后；生成到 `output/` 再逐文�
 python scripts/codex_sdlc/migrate.py build && python scripts/codex_sdlc/migrate.py install
 python scripts/codex_sdlc/verify_migration.py --no-write
 ```
+
+升级已安装的项目（把本仓库当前版本分发到一个或多个目标仓库；只改套件自有文件，不碰画像、记忆、`settings.json`；目标装了 Trae / Codex 时在目标内重新生成并自检；不做 git 提交）：
+
+```bash
+python3 scripts/sync_suite.py --check ../projA ../projB   # 只报告：NEW / UPDATE / UPGRADE / KEEP / CONFLICT
+python3 scripts/sync_suite.py ../projA ../projB           # 写入
+```
+
+目标中套件路径有未提交改动时拒绝；文件内容不是套件历史版本（项目本地改过）时记 CONFLICT 跳过，`--force` 才覆盖。
 
 Trae 版安装：把 `.trae/` 复制到目标仓库的 `.trae/`，在主会话加载 `Skill: sdlc-orchestrator`。
 Codex 版安装：把 `.codex/`、`scripts/codex_sdlc/`、`AGENTS.md` 复制到目标仓库根（`docs/codex-agent-migration.md` 供参考），按 `.codex/sdlc/INSTALL.md` 完成配置，并在 Codex `/hooks` 中审阅、信任 hooks。hook 缺失或被拒绝信任时不会自动注入记忆、校验返回或拦截 cwd，角色须显式读取记忆。

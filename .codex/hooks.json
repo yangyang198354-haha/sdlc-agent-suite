@@ -1,5 +1,5 @@
 {
-  "description": "SDLC v3.8 lifecycle adapters; review with /hooks",
+  "description": "SDLC v3.9 lifecycle adapters; review with /hooks",
   "hooks": {
     "SessionStart": [
       {
